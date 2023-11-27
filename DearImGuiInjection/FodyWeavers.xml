@@ -1,0 +1,31 @@
+﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Costura CreateTemporaryAssemblies='true' DisableCleanup='false'>
+    <ExcludeAssemblies>
+      0Harmony
+      AsmResol*
+      AssetRipper*
+      BepInEx*
+      Cpp2*
+      Disar*
+      Gee.*
+      Il2CppInter*
+      LibCpp2IL*
+      Microsoft*
+      Mono.C*
+      MonoMod*
+      Semantic*
+      StableNameDotNet*
+      Wasm*
+      System.*
+      Iced*
+      capstone*
+    </ExcludeAssemblies>
+    <Unmanaged64Assemblies>
+      FASMX64
+      cimgui
+    </Unmanaged64Assemblies>
+    <Unmanaged32Assemblies>
+      FASM
+    </Unmanaged32Assemblies>
+  </Costura>
+</Weavers>

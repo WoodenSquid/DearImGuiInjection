@@ -38,6 +38,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Costura32\FASM.DLL" />
+	  <None Remove="Costura64\cimgui.dll" />
+	  <None Remove="Costura64\FASMX64.DLL" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Costura32\FASM.DLL" />
+	  <EmbeddedResource Include="Costura64\cimgui.dll" />
+	  <EmbeddedResource Include="Costura64\FASMX64.DLL" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Costura.Fody" Version="5.8.0-alpha0098">
+	    <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
 	  <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
 	</ItemGroup>
 

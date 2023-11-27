@@ -1,14 +1,14 @@
 #if NET6
 
-using System;
-using System.IO;
-using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using DearImGuiInjection.Windows;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using System;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,10 +16,7 @@ namespace DearImGuiInjection.BepInEx;
 
 internal static class LogInitier
 {
-    internal static void Init(ManualLogSource log)
-    {
-        Log.Init(new BepInExLog(log));
-    }
+    internal static void Init(ManualLogSource log) => Log.Init(new BepInExLog(log));
 }
 
 [BepInPlugin(Metadata.GUID, Metadata.Name, Metadata.Version)]
@@ -66,24 +63,18 @@ internal class DearImGuiInjectionBasePluginIL2CPP : BasePlugin
             _hookIgnoreUIObjectsWhenImGuiCursorIsVisible =
                 new(typeof(DearImGuiInjectionBasePluginIL2CPP).GetMethod(nameof(IgnoreUIObjectsWhenImGuiCursorIsVisible), allFlags));
             _hooks.Patch(_eventSystemUpdate, _hookIgnoreUIObjectsWhenImGuiCursorIsVisible);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             Log.LogError(e);
         }
     }
 
-    public static bool IgnoreUIObjectsWhenImGuiCursorIsVisible()
-    {
-        return !DearImGuiInjection.IsCursorVisible;
-    }
+    public static bool IgnoreUIObjectsWhenImGuiCursorIsVisible() => !DearImGuiInjection.IsCursorVisible;
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() =>
         //_eventSystemUpdateHook?.Dispose();
 
         DearImGuiInjection.Dispose();
-    }
 }
 
 #endif

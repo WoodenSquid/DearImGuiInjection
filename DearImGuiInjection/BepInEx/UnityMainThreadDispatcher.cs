@@ -65,10 +65,10 @@ public class UnityMainThreadDispatcher : MonoBehaviour
 
 #else
 
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using UnityEngine;
 
 public class UnityMainThreadDispatcher : MonoBehaviour
@@ -79,10 +79,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour
 
     private static UnityMainThreadDispatcher _instance;
 
-    private void Awake()
-    {
-        _instance = this;
-    }
+    private void Awake() => _instance = this;
 
     private void OnDestroy()
     {
@@ -123,10 +120,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour
     /// Locks the queue and adds the Action to the queue
     /// </summary>
     /// <param name="action">function that will be executed from the main thread.</param>
-    public static void Enqueue(Action action)
-    {
-        Enqueue(ActionWrapper(action));
-    }
+    public static void Enqueue(Action action) => Enqueue(ActionWrapper(action));
 
     public static IEnumerator ActionWrapper(Action a)
     {

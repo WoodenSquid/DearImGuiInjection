@@ -127,8 +127,6 @@ internal class TestPlugin : BaseUnityPlugin
 
 #else
 
-using System;
-using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
@@ -136,6 +134,8 @@ using BepInEx.Unity.IL2CPP.UnityEngine;
 using Il2CppInterop.Runtime.Injection;
 using ImGuiNET;
 using MonoMod.RuntimeDetour;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TestPlugin;
@@ -144,10 +144,7 @@ public class TestPluginBehaviour : MonoBehaviour
 {
     public TestPluginBehaviour(IntPtr ptr) : base(ptr) { }
 
-    private void Update()
-    {
-        UpdateMethod();
-    }
+    private void Update() => UpdateMethod();
 
     private static void UpdateMethod()
     {
@@ -165,10 +162,7 @@ public class TestPluginBehaviour : MonoBehaviour
 
 internal static class LogInitier
 {
-    internal static void Init(ManualLogSource log)
-    {
-        Log.Init(new BepInExLog(log));
-    }
+    internal static void Init(ManualLogSource log) => Log.Init(new BepInExLog(log));
 }
 
 [BepInDependency(DearImGuiInjection.Metadata.GUID)]

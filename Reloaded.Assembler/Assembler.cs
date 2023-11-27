@@ -247,7 +247,6 @@ public unsafe class Assembler : IDisposable
             asmDirectoryFasm86 = Path.Combine(assemblyDirectory, FASM86DLL);
             asmDirectoryFasm64 = Path.Combine(assemblyDirectory, FASM64DLL);
         }
-        
 
         if (IntPtr.Size == 4 && File.Exists(asmDirectoryFasm86))
             return asmDirectoryFasm86;
@@ -260,16 +259,7 @@ public unsafe class Assembler : IDisposable
     /// <summary>
     /// Gets the directory of the currently executing assembly.
     /// </summary>
-    private string GetExecutingDLLDirectory()
-    {
-        string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-        Log.Info($"Executing Assembly Location: {Assembly.GetExecutingAssembly().Location}");
-        Log.Info($"Executing Assembly CodeBase: {Assembly.GetExecutingAssembly().CodeBase}");
-        Log.Info($"App Domain Location: {AppDomain.CurrentDomain.BaseDirectory}");
-        UriBuilder uri = new UriBuilder(codeBase);
-        string path = Uri.UnescapeDataString(uri.Path);
-        return Path.GetDirectoryName(path);
-    }
+    private string GetExecutingDLLDirectory() => Path.GetDirectoryName(string.IsNullOrEmpty(Assembly.GetExecutingAssembly().Location) ? Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path) : Assembly.GetExecutingAssembly().Location);
 
     /// <summary>
     /// Attempts to allocate the memory to store the text to be supplied to FASM assembler.
