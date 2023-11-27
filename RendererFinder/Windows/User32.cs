@@ -14,10 +14,7 @@ internal static class User32
     [DllImport("user32.dll")]
     static extern IntPtr DefWindowProcW(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
     delegate IntPtr WndProcDelegate(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
-    static IntPtr WndProc(IntPtr window, uint message, IntPtr wParam, IntPtr lParam)
-    {
-        return DefWindowProcW(window, message, wParam, lParam);
-    }
+    static IntPtr WndProc(IntPtr window, uint message, IntPtr wParam, IntPtr lParam) => DefWindowProcW(window, message, wParam, lParam);
     struct WNDCLASSEXW
     {
         public int cbSize;

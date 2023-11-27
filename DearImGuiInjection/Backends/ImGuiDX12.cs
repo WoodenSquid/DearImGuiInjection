@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using DearImGuiInjection.Windows;
+﻿using DearImGuiInjection.Windows;
 using ImGuiNET;
 using SharpDX.Direct3D12;
 using SharpDX.DXGI;
+using System;
+using System.Runtime.InteropServices;
 using Device = SharpDX.Direct3D12.Device;
 
 namespace DearImGuiInjection.Backends;
@@ -196,8 +196,7 @@ internal static class ImGuiDX12
         if (DearImGuiInjection.IsCursorVisible)
         {
             User32.GetCursorPos(out _cursorCoords);
-        }
-        else if (_cursorCoords.X + _cursorCoords.Y != 0)
+        } else if (_cursorCoords.X + _cursorCoords.Y != 0)
         {
             User32.SetCursorPos(_cursorCoords.X, _cursorCoords.Y);
         }
@@ -277,8 +276,7 @@ internal static class ImGuiDX12
                 try
                 {
                     item();
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }

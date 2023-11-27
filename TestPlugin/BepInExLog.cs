@@ -6,10 +6,7 @@ internal class BepInExLog : ILog
 {
     private ManualLogSource _logSource;
 
-    internal BepInExLog(ManualLogSource logSource)
-    {
-        _logSource = logSource;
-    }
+    internal BepInExLog(ManualLogSource logSource) => _logSource = logSource;
 
     void ILog.Debug(object data) => _logSource.LogDebug(data);
     void ILog.Error(object data) => _logSource.LogError(data);

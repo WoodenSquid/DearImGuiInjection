@@ -11,10 +11,10 @@ public static class Kernel32
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool CloseHandle(IntPtr hObject);
 
-    public const UInt32 INFINITE = 0xFFFFFFFF;
+    public const uint INFINITE = 0xFFFFFFFF;
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern UInt32 WaitForSingleObject(IntPtr hHandle, UInt32 dwMilliseconds);
+    public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
 
     [DllImport("kernel32.dll")]
     public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
@@ -60,15 +60,9 @@ public static class Kernel32
     /// For subsequent calls, pass in the variable used in the previous call.
     /// </remarks>
     [SecuritySafeCritical]
-    internal static void VER_SET_CONDITION(ref ulong dwlConditionMask, uint dwTypeBitMask, byte dwConditionMask)
-    {
-        dwlConditionMask = VerSetConditionMask(dwlConditionMask, dwTypeBitMask, dwConditionMask);
-    }
+    internal static void VER_SET_CONDITION(ref ulong dwlConditionMask, uint dwTypeBitMask, byte dwConditionMask) => dwlConditionMask = VerSetConditionMask(dwlConditionMask, dwTypeBitMask, dwConditionMask);
 
-    public static ushort HiByte(ushort wValue)
-    {
-        return (ushort)((wValue >> 8) & 0xFF);
-    }
+    public static ushort HiByte(ushort wValue) => (ushort)((wValue >> 8) & 0xFF);
 
     public const uint MB_PRECOMPOSED = 0x00000001;
 
@@ -118,19 +112,13 @@ public struct LargeInteger
     public long QuadPart;
 
     // use only when QuadPart canot be passed
-    public long ToInt64()
-    {
-        return ((long)this.High << 32) | (uint)this.Low;
-    }
+    public long ToInt64() => ((long)this.High << 32) | (uint)this.Low;
 
     // just for demonstration
-    public static LargeInteger FromInt64(long value)
+    public static LargeInteger FromInt64(long value) => new()
     {
-        return new LargeInteger
-        {
-            Low = (int)(value),
-            High = (int)((value >> 32))
-        };
-    }
+        Low = (int)(value),
+        High = (int)((value >> 32))
+    };
 
 }

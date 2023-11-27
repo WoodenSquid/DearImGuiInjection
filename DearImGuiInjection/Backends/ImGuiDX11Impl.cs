@@ -1,15 +1,15 @@
-﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using ImGuiNET;
+﻿using ImGuiNET;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using BlendState = SharpDX.Direct3D11.BlendState;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Device = SharpDX.Direct3D11.Device;
@@ -40,7 +40,7 @@ public static class ImGuiDX11Impl
     private static int _indexBufferSize;
     private static VertexBufferBinding _vertexBinding;
     // so we don't make a temporary object every frame
-    private static RawColor4 _blendColor = new RawColor4(0, 0, 0, 0);
+    private static RawColor4 _blendColor = new(0, 0, 0, 0);
 
     public unsafe struct VERTEX_CONSTANT_BUFFER_DX11
     {
@@ -214,8 +214,7 @@ public static class ImGuiDX11Impl
                         ImGui_ImplDX11_SetupRenderState(draw_data, ctx.NativePointer);
                     else
                         userCallback(cmd_list, &pcmd);
-                }
-                else
+                } else
                 {
                     // Project scissor/clipping rectangles into framebuffer space
                     Vector2 clip_min = new(pcmd.ClipRect.X - clip_off.X, pcmd.ClipRect.Y - clip_off.Y);

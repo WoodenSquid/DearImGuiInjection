@@ -1,8 +1,8 @@
+using NativeMemory;
 using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using NativeMemory;
 
 namespace PortableExecutable;
 
@@ -12,10 +12,7 @@ public class PdbReader
 
     private byte[] _pdbFileBytes;
 
-    public PdbReader(PEReader target)
-    {
-        _target = target;
-    }
+    public PdbReader(PEReader target) => _target = target;
 
     public bool FindOrDownloadPdb(string cacheDirectoryFullPath)
     {
@@ -46,8 +43,7 @@ public class PdbReader
             try
             {
                 file.Delete();
-            }
-            catch (IOException)
+            } catch (IOException)
             {
                 // The file cannot be safely deleted
             }

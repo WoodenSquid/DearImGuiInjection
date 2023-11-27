@@ -14,10 +14,7 @@ internal static class Log
 {
     private static ILog _log;
 
-    internal static void Init(ILog log)
-    {
-        _log = log;
-    }
+    internal static void Init(ILog log) => _log = log;
 
 #if DEBUG
     // Stateless for hot reload stuff

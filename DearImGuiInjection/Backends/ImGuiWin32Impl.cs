@@ -1,8 +1,8 @@
-﻿using System;
+﻿using DearImGuiInjection.Windows;
+using ImGuiNET;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DearImGuiInjection.Windows;
-using ImGuiNET;
 
 namespace DearImGuiInjection.Backends;
 
@@ -79,16 +79,11 @@ public static unsafe class ImGuiWin32Impl
         return true;
     }
 
-    public static bool ImGui_ImplWin32_Init(void* hwnd)
-    {
-        return ImGui_ImplWin32_InitEx(hwnd, false);
-    }
+    public static bool ImGui_ImplWin32_Init(void* hwnd) => ImGui_ImplWin32_InitEx(hwnd, false);
 
-    public static bool ImGui_ImplWin32_InitForOpenGL(void* hwnd)
-    {
+    public static bool ImGui_ImplWin32_InitForOpenGL(void* hwnd) =>
         // OpenGL needs CS_OWNDC
-        return ImGui_ImplWin32_InitEx(hwnd, true);
-    }
+        ImGui_ImplWin32_InitEx(hwnd, true);
 
     public static void Shutdown()
     {
@@ -120,8 +115,7 @@ public static unsafe class ImGuiWin32Impl
         {
             // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
             User32.SetCursor(IntPtr.Zero);
-        }
-        else
+        } else
         {
             const int
                 IDC_ARROW = 32512,
@@ -152,10 +146,7 @@ public static unsafe class ImGuiWin32Impl
         return true;
     }
 
-    static bool IsVkDown(User32.VirtualKey vk)
-    {
-        return (User32.GetKeyState(vk) & 0x8000) != 0;
-    }
+    static bool IsVkDown(User32.VirtualKey vk) => (User32.GetKeyState(vk) & 0x8000) != 0;
 
     static void ImGui_ImplWin32_AddKeyEvent(ImGuiKey key, bool down, User32.VirtualKey native_keycode, int native_scancode = -1)
     {
@@ -432,28 +423,18 @@ public static unsafe class ImGuiWin32Impl
     public static ushort LOWORD(IntPtr dwValue) => unchecked((ushort)(long)dwValue);
     public static ushort LOWORD(UIntPtr dwValue) => unchecked((ushort)(ulong)dwValue);
 
-    public static ushort GET_XBUTTON_WPARAM(UIntPtr val)
-    {
+    public static ushort GET_XBUTTON_WPARAM(UIntPtr val) =>
         // #define GET_XBUTTON_WPARAM(wParam)  (HIWORD(wParam))
-        return HIWORD(val);
-    }
+        HIWORD(val);
     const int XBUTTON1 = 1;
     const int WHEEL_DELTA = 120;
-    public static ushort GET_XBUTTON_WPARAM(IntPtr val)
-    {
+    public static ushort GET_XBUTTON_WPARAM(IntPtr val) =>
         // #define GET_XBUTTON_WPARAM(wParam)  (HIWORD(wParam))
-        return HIWORD(val);
-    }
+        HIWORD(val);
 
-    internal static int GET_WHEEL_DELTA_WPARAM(IntPtr wParam)
-    {
-        return (short)HIWORD(wParam);
-    }
+    internal static int GET_WHEEL_DELTA_WPARAM(IntPtr wParam) => (short)HIWORD(wParam);
 
-    internal static int GET_WHEEL_DELTA_WPARAM(UIntPtr wParam)
-    {
-        return (short)HIWORD(wParam);
-    }
+    internal static int GET_WHEEL_DELTA_WPARAM(UIntPtr wParam) => (short)HIWORD(wParam);
 
     public static byte LOBYTE(ushort wValue) => (byte)(wValue & 0xff);
 
@@ -581,13 +562,11 @@ public static unsafe class ImGuiWin32Impl
                             // Important: Shift keys tend to get stuck when pressed together, missing key-up events are corrected in ImGui_ImplWin32_ProcessKeyEventsWorkarounds()
                             if (IsVkDown(User32.VirtualKey.VK_LSHIFT) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.LeftShift, is_key_down, User32.VirtualKey.VK_LSHIFT, scancode); }
                             if (IsVkDown(User32.VirtualKey.VK_RSHIFT) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.RightShift, is_key_down, User32.VirtualKey.VK_RSHIFT, scancode); }
-                        }
-                        else if (vk == User32.VirtualKey.VK_CONTROL)
+                        } else if (vk == User32.VirtualKey.VK_CONTROL)
                         {
                             if (IsVkDown(User32.VirtualKey.VK_LCONTROL) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.LeftCtrl, is_key_down, User32.VirtualKey.VK_LCONTROL, scancode); }
                             if (IsVkDown(User32.VirtualKey.VK_RCONTROL) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.RightCtrl, is_key_down, User32.VirtualKey.VK_RCONTROL, scancode); }
-                        }
-                        else if (vk == User32.VirtualKey.VK_MENU)
+                        } else if (vk == User32.VirtualKey.VK_MENU)
                         {
                             if (IsVkDown(User32.VirtualKey.VK_LMENU) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.LeftAlt, is_key_down, User32.VirtualKey.VK_LMENU, scancode); }
                             if (IsVkDown(User32.VirtualKey.VK_RMENU) == is_key_down) { ImGui_ImplWin32_AddKeyEvent(ImGuiKey.RightAlt, is_key_down, User32.VirtualKey.VK_RMENU, scancode); }
@@ -605,8 +584,7 @@ public static unsafe class ImGuiWin32Impl
                     // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
                     if ((int)wParam > 0 && (int)wParam < 0x10000)
                         io.AddInputCharacterUTF16((ushort)wParam);
-                }
-                else
+                } else
                 {
                     byte[] lolxd = new byte[1] { 0 };
                     lolxd[0] = *(byte*)&wParam;
@@ -654,7 +632,7 @@ public static unsafe class ImGuiWin32Impl
     static bool _IsWindows8Point1OrGreater() => _IsWindowsVersionOrGreater((short)Kernel32.HiByte(0x0603), LOBYTE(0x0603), 0); // _WIN32_WINNT_WINBLUE
     static bool _IsWindows10OrGreater() => _IsWindowsVersionOrGreater((short)Kernel32.HiByte(0x0A00), LOBYTE(0x0A00), 0); // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
 
-    public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new IntPtr(-4);
+    public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new(-4);
 
     // Helper function to enable DPI awareness without setting up a manifest
     static void ImGui_ImplWin32_EnableDpiAwareness()
@@ -721,8 +699,7 @@ public static unsafe class ImGuiWin32Impl
             bb.hRgnBlur = region;
             Dwmapi.DwmEnableBlurBehindWindow((IntPtr)hwnd, ref bb);
             Gdi32.DeleteObject(region);
-        }
-        else
+        } else
         {
             Dwmapi.DWM_BLURBEHIND bb = new(true);
             Dwmapi.DwmEnableBlurBehindWindow((IntPtr)hwnd, ref bb);

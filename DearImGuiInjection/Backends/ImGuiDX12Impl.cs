@@ -1,14 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using DearImGuiInjection.Windows;
+﻿using DearImGuiInjection.Windows;
 using ImGuiNET;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D12;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using System;
+using System.IO;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using Device = SharpDX.Direct3D12.Device;
 using FenceFlags = SharpDX.Direct3D12.FenceFlags;
 using Resource = SharpDX.Direct3D12.Resource;
@@ -222,8 +222,7 @@ public static class ImGuiDX12Impl
                         ImGui_ImplDX12_SetupRenderState(draw_data, ctx, fr);
                     else
                         userCallback(cmd_list, &pcmd);
-                }
-                else
+                } else
                 {
                     // Project scissor/clipping rectangles into framebuffer space
                     Vector2 clip_min = new(pcmd.ClipRect.X - clip_off.X, pcmd.ClipRect.Y - clip_off.Y);

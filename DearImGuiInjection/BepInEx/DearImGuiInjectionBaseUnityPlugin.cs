@@ -1,14 +1,12 @@
 #if NETSTANDARD2_0 || NET462
 
+using BepInEx;
+using DearImGuiInjection.Windows;
+using MonoMod.RuntimeDetour;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using BepInEx;
-using DearImGuiInjection.Windows;
-using MonoMod.RuntimeDetour;
 
 namespace DearImGuiInjection.BepInEx;
 
@@ -33,7 +31,7 @@ internal class DearImGuiInjectionBaseUnityPlugin : BaseUnityPlugin
             "Key for switching the cursor visibility."));
 
         DearImGuiInjection.Init(imguiIniConfigDirectoryPath, assetsFolder, cursorVisibilityConfig);
-        
+
         SetupIgnoreUIObjectsWhenImGuiCursorIsVisible();
 
         gameObject.AddComponent<UnityMainThreadDispatcher>();
@@ -48,8 +46,7 @@ internal class DearImGuiInjectionBaseUnityPlugin : BaseUnityPlugin
             _eventSystemType = unityEngineUIDll.GetType("UnityEngine.EventSystems.EventSystem");
             _eventSystemUpdate = _eventSystemType.GetMethod("Update", allFlags);
             _eventSystemUpdateHook = new Hook(_eventSystemUpdate, IgnoreUIObjectsWhenImGuiCursorIsVisible);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             Log.Error(e);
         }

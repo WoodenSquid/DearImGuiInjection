@@ -116,8 +116,7 @@ static void CreateRelease(DirectoryInfo solutionDirectory, string configuration)
         try
         {
             Directory.Delete(architectureReleaseDirectory, true);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
         Directory.CreateDirectory(architectureReleaseDirectory);

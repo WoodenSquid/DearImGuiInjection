@@ -1,10 +1,10 @@
 ﻿#if NETSTANDARD2_0 || NET462
 
-using System.Collections.Generic;
 using BepInEx;
 using DearImGuiInjection.BepInEx;
 using ImGuiNET;
 using MonoMod.RuntimeDetour;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TestPlugin;
@@ -22,20 +22,11 @@ internal class TestPlugin : BaseUnityPlugin
 
     private static List<Hook> Hooks = new();
 
-    private void Awake()
-    {
-        Log.Init(new BepInExLog(Logger));
-    }
+    private void Awake() => Log.Init(new BepInExLog(Logger));
 
-    private void OnEnable()
-    {
-        DearImGuiInjection.DearImGuiInjection.Render += MyUI;
-    }
+    private void OnEnable() => DearImGuiInjection.DearImGuiInjection.Render += MyUI;
 
-    private void Update()
-    {
-        UpdateMethod();
-    }
+    private void Update() => UpdateMethod();
 
 
     private static GameObject goTest;
@@ -50,15 +41,13 @@ internal class TestPlugin : BaseUnityPlugin
                 goTest = new GameObject("TestGameObjectReload");
                 var testMonoBeh = goTest.AddComponent<TestMonoBeh>();
                 Log.Info("created goTest, testMonoBeh.A : " + testMonoBeh.A);
-            }
-            else
+            } else
             {
                 var testMonoBeh = goTest.GetComponent<TestMonoBeh>();
                 if (testMonoBeh)
                 {
                     Log.Info("got a goTest, testMonoBeh.A : " + testMonoBeh.A);
-                }
-                else
+                } else
                 {
                     Log.Info("got a goTest, but no testMonoBeh");
                 }
@@ -133,10 +122,7 @@ internal class TestPlugin : BaseUnityPlugin
 
     private static byte[] buffer_input_text = new byte[40];
 
-    private void OnDisable()
-    {
-        DearImGuiInjection.DearImGuiInjection.Render -= MyUI;
-    }
+    private void OnDisable() => DearImGuiInjection.DearImGuiInjection.Render -= MyUI;
 }
 
 #else

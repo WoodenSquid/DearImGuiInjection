@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using CppInterop;
+﻿using CppInterop;
 using Reloaded.Hooks;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
+using System;
+using System.Collections.Generic;
 using Device = SharpDX.Direct3D11.Device;
 
 namespace RendererFinder.Renderers;
@@ -55,7 +55,7 @@ public class DX11Renderer : IRenderer
     private static CDXGISwapChainPresentDelegate _swapChainPresentHookDelegate = new(SwapChainPresentHook);
     private static Hook<CDXGISwapChainPresentDelegate> _swapChainPresentHook;
 
-    public static event Action<SwapChain, uint, uint> OnPresent { add { _onPresentAction += value; } remove { _onPresentAction -= value; } }
+    public static event Action<SwapChain, uint, uint> OnPresent { add => _onPresentAction += value; remove => _onPresentAction -= value; }
     private static Action<SwapChain, uint, uint> _onPresentAction;
 
     [Reloaded.Hooks.Definitions.X64.Function(Reloaded.Hooks.Definitions.X64.CallingConventions.Microsoft)]
@@ -65,10 +65,10 @@ public class DX11Renderer : IRenderer
     private static CDXGISwapChainResizeBuffersDelegate _swapChainResizeBuffersHookDelegate = new(SwapChainResizeBuffersHook);
     private static Hook<CDXGISwapChainResizeBuffersDelegate> _swapChainResizeBuffersHook;
 
-    public static event Action<SwapChain, uint, uint, uint, Format, uint> PreResizeBuffers { add { _preResizeBuffers += value; } remove { _preResizeBuffers -= value; } }
+    public static event Action<SwapChain, uint, uint, uint, Format, uint> PreResizeBuffers { add => _preResizeBuffers += value; remove => _preResizeBuffers -= value; }
     private static Action<SwapChain, uint, uint, uint, Format, uint> _preResizeBuffers;
 
-    public static event Action<SwapChain, uint, uint, uint, Format, uint> PostResizeBuffers { add { _postResizeBuffers += value; } remove { _postResizeBuffers -= value; } }
+    public static event Action<SwapChain, uint, uint, uint, Format, uint> PostResizeBuffers { add => _postResizeBuffers += value; remove => _postResizeBuffers -= value; }
     private static Action<SwapChain, uint, uint, uint, Format, uint> _postResizeBuffers;
 
     public unsafe bool Init()
@@ -136,8 +136,7 @@ public class DX11Renderer : IRenderer
                 try
                 {
                     item(swapChain, syncInterval, flags);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -158,8 +157,7 @@ public class DX11Renderer : IRenderer
                 try
                 {
                     item(swapChain, bufferCount, width, height, newFormat, swapchainFlags);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -175,8 +173,7 @@ public class DX11Renderer : IRenderer
                 try
                 {
                     item(swapChain, bufferCount, width, height, newFormat, swapchainFlags);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }

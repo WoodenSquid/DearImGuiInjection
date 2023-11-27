@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using DearImGuiInjection.Backends;
+﻿using DearImGuiInjection.Backends;
 using DearImGuiInjection.Windows;
 using ImGuiNET;
 using RendererFinder.Renderers;
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace DearImGuiInjection;
 
@@ -41,7 +41,7 @@ public static class DearImGuiInjection
     /// <summary>
     /// User supplied function to render the Dear ImGui UI.
     /// </summary>
-    public static event Action Render { add { RenderAction += value; } remove { RenderAction -= value; } }
+    public static event Action Render { add => RenderAction += value; remove => RenderAction -= value; }
     internal static Action RenderAction;
 
     internal static void Init(string imguiIniConfigDirectoryPath, string assetsFolder, IConfigEntry<VirtualKey> cursorVisibilityConfig)
@@ -136,8 +136,7 @@ public static class DearImGuiInjection
         {
             IO.MouseDrawCursor = true;
             IO.ConfigFlags &= ~ImGuiConfigFlags.NoMouse;
-        }
-        else
+        } else
         {
             IO.MouseDrawCursor = false;
             IO.ConfigFlags |= ImGuiConfigFlags.NoMouse;

@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using ImGuiNET;
+using System.IO;
 using System.Numerics;
-using ImGuiNET;
 
 namespace DearImGuiInjection;
 
@@ -8,10 +8,10 @@ public static class DearImGuiTheme
 {
     public static ImGuiStylePtr Style { get; private set; }
 
-    private static readonly Vector4 BGColor = new Vector4(0.117f, 0.113f, 0.172f, .75f);
-    private static readonly Vector4 Primary = new Vector4(0.172f, 0.380f, 0.909f, 1f);
-    private static readonly Vector4 Secondary = new Vector4(0.443f, 0.654f, 0.819f, 1f);
-    private static readonly Vector4 WhiteBroken = new Vector4(0.792f, 0.784f, 0.827f, 1f);
+    private static readonly Vector4 BGColor = new(0.117f, 0.113f, 0.172f, .75f);
+    private static readonly Vector4 Primary = new(0.172f, 0.380f, 0.909f, 1f);
+    private static readonly Vector4 Secondary = new(0.443f, 0.654f, 0.819f, 1f);
+    private static readonly Vector4 WhiteBroken = new(0.792f, 0.784f, 0.827f, 1f);
 
     internal static void Init()
     {

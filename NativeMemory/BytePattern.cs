@@ -10,7 +10,10 @@ public static class StringBytePattern
 {
     public static byte?[] ParseHexBytes(this string str)
     {
-        static bool IsHexChar(char lowerC) => '0' <= lowerC && lowerC <= '9' || 'a' <= lowerC && lowerC <= 'f';
+        static bool IsHexChar(char lowerC)
+        {
+            return '0' <= lowerC && lowerC <= '9' || 'a' <= lowerC && lowerC <= 'f';
+        }
 
         var result = new List<byte?>();
 
@@ -28,13 +31,11 @@ public static class StringBytePattern
             if (c == ';')
             {
                 sr.ReadLine();
-            }
-            else if (c == '?')
+            } else if (c == '?')
             {
                 result.Add(null);
                 sr.Read();
-            }
-            else if (IsHexChar(c) && sr.Peek() > 0)
+            } else if (IsHexChar(c) && sr.Peek() > 0)
             {
                 var other = char.ToLower((char)sr.Peek());
                 if (!IsHexChar(other))
@@ -72,9 +73,9 @@ public class BytePattern
 
     public bool IsE8 => Pattern[0] == 0xE8;
 
-    public static implicit operator BytePattern(string pattern) => new BytePattern(pattern);
+    public static implicit operator BytePattern(string pattern) => new(pattern);
 
-    public static implicit operator BytePattern(byte[] pattern) => new BytePattern(pattern);
+    public static implicit operator BytePattern(byte[] pattern) => new(pattern);
 
     // Table-building algorithm from KMP
     private int[] CreateJumpTable()
@@ -88,8 +89,7 @@ public class BytePattern
             if (Pattern[i] == Pattern[substrCandidate])
             {
                 jumpTable[i] = jumpTable[substrCandidate];
-            }
-            else
+            } else
             {
                 jumpTable[i] = substrCandidate;
                 while (substrCandidate >= 0 && Pattern[i] != Pattern[substrCandidate])
@@ -115,8 +115,7 @@ public class BytePattern
                 {
                     return new IntPtr(j - k);
                 }
-            }
-            else
+            } else
             {
                 k = JumpTable[k];
                 if (k >= 0)

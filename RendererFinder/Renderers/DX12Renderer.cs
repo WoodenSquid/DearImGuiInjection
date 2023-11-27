@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CppInterop;
+﻿using CppInterop;
 using Reloaded.Hooks;
 using SharpDX.Direct3D12;
 using SharpDX.DXGI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RendererFinder.Renderers;
 
@@ -155,8 +155,7 @@ public class DX12Renderer : IRenderer
                 try
                 {
                     item(swapChain, syncInterval, flags, presentParameters);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -177,8 +176,7 @@ public class DX12Renderer : IRenderer
                 try
                 {
                     item(swapChain, bufferCount, width, height, newFormat, swapchainFlags);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -194,8 +192,7 @@ public class DX12Renderer : IRenderer
                 try
                 {
                     item(swapChain, bufferCount, width, height, newFormat, swapchainFlags);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -224,8 +221,7 @@ public class DX12Renderer : IRenderer
                         {
                             executedThings = true;
                         }
-                    }
-                    catch (Exception e)
+                    } catch (Exception e)
                     {
                         Log.Error(e);
                     }

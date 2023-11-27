@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using RendererFinder.Renderers;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using RendererFinder.Renderers;
 
 namespace RendererFinder;
 
@@ -32,10 +32,7 @@ public static class RendererFinder
         return false;
     }
 
-    public static void Dispose()
-    {
-        RendererKind = RendererKind.None;
-    }
+    public static void Dispose() => RendererKind = RendererKind.None;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static IRenderer NewDX11Renderer()
@@ -50,8 +47,7 @@ public static class RendererFinder
                 if (moduleName.Contains("d3d11"))
                 {
                     d3d11ModuleIsHere = true;
-                }
-                else if (moduleName.Contains("d3d12"))
+                } else if (moduleName.Contains("d3d12"))
                 {
                     d3d12ModuleIsHere = true;
                 }

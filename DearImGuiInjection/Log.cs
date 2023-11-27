@@ -14,10 +14,7 @@ internal static class Log
 {
     private static ILog _log;
 
-    internal static void Init(ILog log)
-    {
-        _log = log;
-    }
+    internal static void Init(ILog log) => _log = log;
 
     internal static void Debug(object data) => _log.Debug(data);
     internal static void Error(object data) => _log.Error(data);

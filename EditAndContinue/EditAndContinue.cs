@@ -1,15 +1,15 @@
 ﻿#if NETSTANDARD2_0 || NET462
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using Mono.Cecil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace EditAndContinue;
@@ -27,15 +27,9 @@ internal class EditAndContinue : BaseUnityPlugin
     private static MethodInfo GetValueInternal = typeof(FieldInfo).Assembly.GetType("System.Reflection.MonoField").GetMethod("GetValueInternal", allFlags);
     private static MethodInfo SetValueInternal = typeof(FieldInfo).Assembly.GetType("System.Reflection.MonoField").GetMethod("SetValueInternal", allFlags);
 
-    private void Awake()
-    {
-        ReloadKey = Config.Bind("General", "ReloadKey", "f2", "Press this key to reload all the plugins from the scripts folder");
-    }
+    private void Awake() => ReloadKey = Config.Bind("General", "ReloadKey", "f2", "Press this key to reload all the plugins from the scripts folder");
 
-    private void Update()
-    {
-        StaticUpdate();
-    }
+    private void Update() => StaticUpdate();
 
     private static void StaticUpdate()
     {
@@ -53,137 +47,130 @@ internal class EditAndContinue : BaseUnityPlugin
                 foreach (string path in Directory.GetFiles(scriptDirectory, "*.dll", SearchOption.AllDirectories))
                 {
 
-                    using (var dll = AssemblyDefinition.ReadAssembly(path, new ReaderParameters { AssemblyResolver = resolver }))
-                    {
-                        var originalDllName = dll.Name.Name;
+                    using var dll = AssemblyDefinition.ReadAssembly(path, new ReaderParameters { AssemblyResolver = resolver });
+                    var originalDllName = dll.Name.Name;
 
-                        Assembly oldAssembly = null;
-                        int newIndex = 0;
-                        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    Assembly oldAssembly = null;
+                    int newIndex = 0;
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        for (int i = 0; i < 1000; i++)
                         {
-                            for (int i = 0; i < 1000; i++)
+                            var indexedOriginalDllName = originalDllName + "-" + i.ToString();
+                            if (assembly.GetName().Name == originalDllName ||
+                                assembly.GetName().Name == indexedOriginalDllName)
                             {
-                                var indexedOriginalDllName = originalDllName + "-" + i.ToString();
-                                if (assembly.GetName().Name == originalDllName ||
-                                    assembly.GetName().Name == indexedOriginalDllName)
-                                {
-                                    oldAssembly = assembly;
-                                    newIndex = i + 1;
-                                    break;
-                                }
+                                oldAssembly = assembly;
+                                newIndex = i + 1;
+                                break;
                             }
                         }
-                        if (oldAssembly == null)
+                    }
+                    if (oldAssembly == null)
+                    {
+                        Log.Error("oldAssembly == null");
+                        return;
+                    } else
+                    {
+                        Log.Info("found old assembly " + oldAssembly.FullName);
+                    }
+
+                    var oldTypes = oldAssembly.GetTypes();
+
+                    dll.Name.Name = $"{dll.Name.Name}-{newIndex}";
+
+                    using var ms = new MemoryStream();
+                    dll.Write(ms);
+                    var ass = Assembly.Load(ms.ToArray());
+
+                    Log.Info("Assembly.Load " + ass.FullName);
+
+                    var newTypes = ass.GetTypes();
+
+                    var allOldMethods = oldTypes.SelectMany(t => t.GetMethods(allFlags)).ToArray();
+                    var allNewMethods = newTypes.SelectMany(t => t.GetMethods(allFlags)).ToArray();
+                    var methodCount = Math.Min(allOldMethods.Length, allNewMethods.Length);
+
+                    HashSet<string> restoredTypesStates = new();
+
+                    for (int i = 0; i < methodCount; i++)
+                    {
+                        var oldMethod = allOldMethods[i];
+                        for (int j = 0; j < methodCount; j++)
                         {
-                            Log.Error("oldAssembly == null");
-                            return;
-                        }
-                        else
-                        {
-                            Log.Info("found old assembly " + oldAssembly.FullName);
-                        }
-
-                        var oldTypes = oldAssembly.GetTypes();
-
-                        dll.Name.Name = $"{dll.Name.Name}-{newIndex}";
-
-                        using (var ms = new MemoryStream())
-                        {
-                            dll.Write(ms);
-                            var ass = Assembly.Load(ms.ToArray());
-
-                            Log.Info("Assembly.Load " + ass.FullName);
-
-                            var newTypes = ass.GetTypes();
-
-                            var allOldMethods = oldTypes.SelectMany(t => t.GetMethods(allFlags)).ToArray();
-                            var allNewMethods = newTypes.SelectMany(t => t.GetMethods(allFlags)).ToArray();
-                            var methodCount = Math.Min(allOldMethods.Length, allNewMethods.Length);
-
-                            HashSet<string> restoredTypesStates = new();
-
-                            for (int i = 0; i < methodCount; i++)
+                            var newMethod = allNewMethods[j];
+                            try
                             {
-                                var oldMethod = allOldMethods[i];
-                                for (int j = 0; j < methodCount; j++)
+                                if (oldMethod.DeclaringType.FullName == newMethod.DeclaringType.FullName && oldMethod.Name == newMethod.Name)
                                 {
-                                    var newMethod = allNewMethods[j];
-                                    try
+                                    if (!restoredTypesStates.Contains(oldMethod.DeclaringType.FullName))
                                     {
-                                        if (oldMethod.DeclaringType.FullName == newMethod.DeclaringType.FullName && oldMethod.Name == newMethod.Name)
+                                        restoredTypesStates.Add(oldMethod.DeclaringType.FullName);
+
+                                        try
                                         {
-                                            if (!restoredTypesStates.Contains(oldMethod.DeclaringType.FullName))
+                                            foreach (var oldTypeField in oldMethod.DeclaringType.GetFields(allFlags))
                                             {
-                                                restoredTypesStates.Add(oldMethod.DeclaringType.FullName);
-
-                                                try
+                                                foreach (var newTypeField in newMethod.DeclaringType.GetFields(allFlags))
                                                 {
-                                                    foreach (var oldTypeField in oldMethod.DeclaringType.GetFields(allFlags))
+                                                    if (oldTypeField.IsStatic && oldTypeField.Name == newTypeField.Name)
                                                     {
-                                                        foreach (var newTypeField in newMethod.DeclaringType.GetFields(allFlags))
-                                                        {
-                                                            if (oldTypeField.IsStatic && oldTypeField.Name == newTypeField.Name)
-                                                            {
-                                                                object staticField = null;
-                                                                var oldTypeFieldValue = GetValueInternal.Invoke(oldTypeField, new object[] { staticField });
-                                                                SetValueInternal.Invoke(staticField, new object[] { newTypeField, staticField, oldTypeFieldValue });
-                                                                // equivalent to
-                                                                //newTypeField.SetValue(null, oldTypeField.GetValue(null));
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    Log.Warning(e);
-                                                }
-                                            }
-
-                                            static void FixUpRefs(ILContext il)
-                                            {
-                                                var c = new ILCursor(il);
-
-                                                foreach (var instruction in c.Instrs)
-                                                {
-                                                    if (instruction.Operand == null)
-                                                    {
-                                                        continue;
-                                                    }
-
-                                                    if (instruction.Operand.GetType() == typeof(GenericInstanceMethod))
-                                                    {
-                                                        var methodRef = (MethodReference)instruction.Operand;
-
-                                                        for (int i = 0; i < methodRef.GenericParameters.Count; i++)
-                                                        {
-                                                            var oldGenericParam = methodRef.GenericParameters[i];
-                                                            //oldGenericParam.decl
-                                                            //var newGenericParam = new GenericParameter()
-                                                        }
-
-                                                        //var m = typeof(GameObject).GetMethods(allFlags).First(m => m.IsGenericMethod && m.Name == nameof(GetComponent)).MakeGenericMethod(typeof(TestComp));
-                                                        //var gm = il.Import(m);
-                                                        //gm.GenericParameters.Add(new GenericParameter("T", gm));
-
-                                                        instruction.Operand = methodRef;
+                                                        object staticField = null;
+                                                        var oldTypeFieldValue = GetValueInternal.Invoke(oldTypeField, new object[] { staticField });
+                                                        SetValueInternal.Invoke(staticField, new object[] { newTypeField, staticField, oldTypeFieldValue });
+                                                        // equivalent to
+                                                        //newTypeField.SetValue(null, oldTypeField.GetValue(null));
+                                                        break;
                                                     }
                                                 }
                                             }
-
-                                            // todo: fix up type refs so that things like GetComponent<TypeFromOldAssembly>()
-                                            // still work even after hot reloading
-                                            //new ILHook(newMethod, FixUpRefs);
-
-                                            Hooks.Add(new Hook(oldMethod, newMethod));
-                                            break;
+                                        } catch (Exception e)
+                                        {
+                                            Log.Warning(e);
                                         }
                                     }
-                                    catch (Exception e)
+
+                                    static void FixUpRefs(ILContext il)
                                     {
-                                        Log.Error(e);
+                                        var c = new ILCursor(il);
+
+                                        foreach (var instruction in c.Instrs)
+                                        {
+                                            if (instruction.Operand == null)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instruction.Operand.GetType() == typeof(GenericInstanceMethod))
+                                            {
+                                                var methodRef = (MethodReference)instruction.Operand;
+
+                                                for (int i = 0; i < methodRef.GenericParameters.Count; i++)
+                                                {
+                                                    var oldGenericParam = methodRef.GenericParameters[i];
+                                                    //oldGenericParam.decl
+                                                    //var newGenericParam = new GenericParameter()
+                                                }
+
+                                                //var m = typeof(GameObject).GetMethods(allFlags).First(m => m.IsGenericMethod && m.Name == nameof(GetComponent)).MakeGenericMethod(typeof(TestComp));
+                                                //var gm = il.Import(m);
+                                                //gm.GenericParameters.Add(new GenericParameter("T", gm));
+
+                                                instruction.Operand = methodRef;
+                                            }
+                                        }
                                     }
+
+                                    // todo: fix up type refs so that things like GetComponent<TypeFromOldAssembly>()
+                                    // still work even after hot reloading
+                                    //new ILHook(newMethod, FixUpRefs);
+
+                                    Hooks.Add(new Hook(oldMethod, newMethod));
+                                    break;
                                 }
+                            } catch (Exception e)
+                            {
+                                Log.Error(e);
                             }
                         }
                     }

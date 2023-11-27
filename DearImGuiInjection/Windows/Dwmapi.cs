@@ -32,7 +32,7 @@ public static class Dwmapi
 
         public bool TransitionOnMaximized
         {
-            get { return fTransitionOnMaximized; }
+            get => fTransitionOnMaximized;
             set
             {
                 fTransitionOnMaximized = value;

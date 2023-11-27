@@ -40,14 +40,12 @@ public class PatternBatch
             if (result == IntPtr.Zero)
             {
                 Log.Error($"BytePattern {entry.Name} failed.");
-            }
-            else
+            } else
             {
                 try
                 {
                     entry.OnCompletion?.Invoke(result);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     Log.Error($"{e}");
                 }
